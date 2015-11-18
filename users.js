@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-//MONGODB
+mongoose.connect('mongodb://justin:mongoadmin@apollo.modulusmongo.net:27017/enO6tuvy');
 
 var userSchema = new Schema({
         name: String,
