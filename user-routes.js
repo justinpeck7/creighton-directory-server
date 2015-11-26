@@ -38,7 +38,7 @@ app.post('/user/createUser', function(req, res) {
 
   var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'groups', 'password');
 
-  profile.groups = profile.groups.replace(/\s/g, '').split(',');
+  profile.groups = profile.groups.split(',');
 
   Users.create(profile, function(err) {
     if (err) {
