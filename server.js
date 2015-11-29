@@ -1,3 +1,5 @@
+/*All of this 'require' stuff is looking for files in node_modules, or if it begins with './' it checks the current working directory.
+Dependencies are listed in package.json. Some modules, such as http, are built into node*/
 var logger          = require('morgan'),
     cors            = require('cors'),
     http            = require('http'),
@@ -11,6 +13,7 @@ var logger          = require('morgan'),
 
 dotenv.load();
 
+/*bodyParser lets us see the request params as json*/
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -28,9 +31,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
+/*Load user-routes.js and add them to the express url mapping*/
 app.use(require('./user-routes'));
+/*Load socket-config.js which sets up Socket.io chat functionality*/
 require('./socket-config')(io);
 
+/*Set the http headers to allow cross origin resource sharing (CORS) and specific http methods*/
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -43,8 +49,7 @@ app.all('*', function(req, res, next) {
   }
 });
 
-var port = process.env.PORT || 3001;
-
+/*Tells the server to listen on port 3001, so all of the server routes are localhost:3001/yada/yada*/
 server.listen(3001);
 console.log('listening on port 3001');
 

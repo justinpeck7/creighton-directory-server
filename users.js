@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-//
+//DB CONFIG
 
+/*Schema For the 'Users' model in our mongoose database*/
 var userSchema = new Schema({
         name: String,
         dormName: String,

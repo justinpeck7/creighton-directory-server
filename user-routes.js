@@ -11,16 +11,38 @@ var jwtCheck = ejwt({
   secret: config.secret
 });
 
+/*Creates the token sent to the client. Encrypts it with a string 'secret' which is stored in config.json.
+The client saves this token and then sends it with every request so the server can identify them*/
 function createToken(user) {
   return jwt.sign(_.omit(user, 'password'), config.secret, {
     expiresInMinutes: 60 * 5
   });
 }
 
+/*Builds the query for the 'advanced' search. Only adds properties to the returned 'query' object if they
+exist in the search params. So if someone only fills out NetID in the search field, only NetID is added to the mongo query*/
+function buildQuery(params) {
+  var query = {};
+  for (var key in params) {
+    if (params.hasOwnProperty(key)) {
+      var val = params[key];
+      if (val) {
+        query[key] = {
+          '$regex': val,
+          '$options': 'i'
+        };
+      }
+    }
+  }
+  return query;
+}
+
+/*Every time a request is made to /user/auth/something make sure a valid token is attached*/
 app.use('/user/auth', jwtCheck);
 
+/*The endpoint to create a new user. Checks that they have netId and password, and that the user doesn't already exist.
+If everything checks out the server returns a token for the client to hold onto*/
 app.post('/user/createUser', function(req, res) {
-
   var existingUser;
 
   Users.findOne({
@@ -37,7 +59,6 @@ app.post('/user/createUser', function(req, res) {
   }
 
   var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'groups', 'password');
-
   profile.groups = profile.groups.split(',');
 
   Users.create(profile, function(err) {
@@ -51,12 +72,15 @@ app.post('/user/createUser', function(req, res) {
   });
 });
 
+/*The login endpoint. Finds the user from the database and returns a token*/
 app.post('/user/createSession', function(req, res) {
   if (!req.body.netId || !req.body.password) {
     return res.status(400).send("You must send the netId and the password");
   }
 
-  Users.findOne({'netId': req.body.netId}, function(err, user) {
+  Users.findOne({
+    'netId': req.body.netId
+  }, function(err, user) {
 
     if (!user) {
       return res.status(401).send("The netId or password don't match");
@@ -74,7 +98,8 @@ app.post('/user/createSession', function(req, res) {
 
 });
 
-app.get('/user/auth/allUsers', function(req, res) {
+/*will be removed*/
+app.get('/user/auth/test/allUsers', function(req, res) {
   Users.find(function(err, users) {
     if (err) {
       res.send(err);
@@ -83,7 +108,8 @@ app.get('/user/auth/allUsers', function(req, res) {
   });
 });
 
-app.delete('/user/auth/allUsers', function(req, res) {
+/*will be removed*/
+app.delete('/user/auth/test/allUsers', function(req, res) {
   Users.remove({}, function(err, users) {
     if (err) {
       res.send(err);
@@ -94,5 +120,39 @@ app.delete('/user/auth/allUsers', function(req, res) {
       }
       res.json(users);
     })
+  });
+});
+
+/*Find all users by name*/
+app.get('/user/auth/findAll', function(req, res) {
+  var name = req.query.name;
+
+  Users.find({
+    'name': {
+      '$regex': name,
+      '$options': 'i'
+    }
+  }, function(err, users) {
+    res.send(users);
+  });
+});
+
+/*Advanced search. Grabs all of the request parameters and passes them to the buildQuery function,
+then runs that query and returns the result*/
+app.get('/user/auth/findAllAdvanced', function(req, res) {
+  var reqParams = {
+      name: req.query.name,
+      dormName: req.query.dormName,
+      dormRoom: req.query.dormRoom,
+      netId: req.query.netId,
+      gradClass: req.query.gradClass,
+      major: req.query.major,
+      phone: req.query.phone,
+      groups: req.query.groups
+    },
+    query = buildQuery(reqParams);
+
+  Users.find(query, function(err, users) {
+    res.send(users);
   });
 });
