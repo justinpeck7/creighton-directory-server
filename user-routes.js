@@ -150,12 +150,10 @@ app.get('/user/auth/findAllAdvanced', function(req, res) {
   var reqParams = {
       name: req.query.name,
       dormName: req.query.dormName,
-      dormRoom: req.query.dormRoom,
       netId: req.query.netId,
-      gradClass: req.query.gradClass,
       major: req.query.major,
-      phone: req.query.phone,
-      groups: req.query.groups
+      groups: req.query.groups,
+      email: req.query.email
     },
     query = buildQuery(reqParams);
 
