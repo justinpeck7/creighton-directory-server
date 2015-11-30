@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-//MONGO CONFIG
+
 
 /*Schema For the 'Users' model in our mongoose database*/
 var userSchema = new Schema({
@@ -12,7 +12,8 @@ var userSchema = new Schema({
         gradClass: String,
         major: String,
         phone: String,
-        groups: Array,
+        groups: [String],
+        email: String,
         password: String
     }),
     Users = mongoose.model('Users', userSchema);

@@ -11,7 +11,7 @@ module.exports = function(io) {
         });
 
         socket.on('sentMsg', function(data) {
-            io.in(data.room).emit('message', data);
+            io.emit('message', data);
         });
     });
 };

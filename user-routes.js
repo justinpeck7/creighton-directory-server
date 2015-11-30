@@ -37,6 +37,10 @@ function buildQuery(params) {
   return query;
 }
 
+function scrubUsers(user) {
+  return _.pick(user, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'groups', 'email');
+}
+
 /*Every time a request is made to /user/auth/something make sure a valid token is attached*/
 app.use('/user/auth', jwtCheck);
 
@@ -58,7 +62,7 @@ app.post('/user/createUser', function(req, res) {
     return res.status(400).send("A user with that netId already exists");
   }
 
-  var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'groups', 'password');
+  var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'email', 'groups', 'password');
   profile.groups = profile.groups.split(',');
 
   Users.create(profile, function(err) {
@@ -133,7 +137,10 @@ app.get('/user/auth/findAll', function(req, res) {
       '$options': 'i'
     }
   }, function(err, users) {
-    res.send(users);
+    var results = _.map(users, scrubUsers);
+    res.send({
+      users: results
+    });
   });
 });
 
@@ -153,6 +160,8 @@ app.get('/user/auth/findAllAdvanced', function(req, res) {
     query = buildQuery(reqParams);
 
   Users.find(query, function(err, users) {
-    res.send(users);
+    res.send({
+      users: users
+    });
   });
 });
