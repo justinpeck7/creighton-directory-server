@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-//DB CONFIG
+//MONGO CONFIG
 
 /*Schema For the 'Users' model in our mongoose database*/
 var userSchema = new Schema({
@@ -17,4 +17,14 @@ var userSchema = new Schema({
     }),
     Users = mongoose.model('Users', userSchema);
 
-module.exports = Users;
+/*Schema For the 'Announcements' model in our mongoose database*/
+    var anncSchema = new Schema ({
+        title: String,
+        content: String
+    }),
+    Announcements = mongoose.model('Announcements', anncSchema);
+
+module.exports = {
+    Users: Users,
+    Announcements: Announcements
+};

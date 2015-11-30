@@ -1,14 +1,14 @@
 /*All of this 'require' stuff is looking for files in node_modules, or if it begins with './' it checks the current working directory.
 Dependencies are listed in package.json. Some modules, such as http, are built into node*/
-var logger          = require('morgan'),
-    cors            = require('cors'),
-    http            = require('http'),
-    express         = require('express'),
+var logger = require('morgan'),
+    cors = require('cors'),
+    http = require('http'),
+    express = require('express'),
     app = express(),
     server = http.Server(app),
-    errorhandler    = require('errorhandler'),
-    dotenv          = require('dotenv'),
-    bodyParser      = require('body-parser'),
+    errorhandler = require('errorhandler'),
+    dotenv = require('dotenv'),
+    bodyParser = require('body-parser'),
     io = require('socket.io')(server);
 
 dotenv.load();
@@ -31,8 +31,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(errorhandler())
 }
 
-/*Load user-routes.js and add them to the express url mapping*/
+/*Load user-routes.js and announcement-routes.js and add them to the express url mapping*/
 app.use(require('./user-routes'));
+app.use(require('./announcement-routes'));
 /*Load socket-config.js which sets up Socket.io chat functionality*/
 require('./socket-config')(io);
 

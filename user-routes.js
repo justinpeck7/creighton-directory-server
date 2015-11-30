@@ -3,7 +3,7 @@ var express = require('express'),
   config = require('./config'),
   jwt = require('jsonwebtoken'),
   ejwt = require('express-jwt'),
-  Users = require('./users.js');
+  Users = require('./models.js').Users;
 
 var app = module.exports = express.Router();
 
