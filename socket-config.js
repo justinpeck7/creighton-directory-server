@@ -3,12 +3,15 @@ When a client sends a message to the server it is then sent to all of the other 
 Whatever 'module.exports' is set to, that's what another file gets when it 'requires' this one*/
 module.exports = function(io) {
     io.on('connection', function (socket) {
+        socket.join('global');
 
-        socket.on('sentMsg', function(sent) {
-            io.emit('message', sent);
+        socket.on('switch', function(data) {
+            socket.leave(data.oldRoom);
+            socket.join(data.newRoom);
         });
 
-        console.log('someone connected');
-        socket.emit('message', {name: 'Server', message: 'Welcome'});
+        socket.on('sentMsg', function(data) {
+            io.in(data.room).emit('message', data);
+        });
     });
 };
