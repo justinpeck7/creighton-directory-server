@@ -38,7 +38,7 @@ function buildQuery(params) {
 }
 
 function scrubUsers(user) {
-  return _.pick(user, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'groups', 'email');
+  return _.pick(user, 'name', 'dormName', 'dormRoom', 'netId', 'gradClass', 'major', 'phone', 'groups', 'email');
 }
 
 /*Every time a request is made to /user/auth/something make sure a valid token is attached*/
@@ -62,7 +62,7 @@ app.post('/user/createUser', function(req, res) {
     return res.status(400).send("A user with that netId already exists");
   }
 
-  var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradYear', 'major', 'phone', 'email', 'groups', 'password');
+  var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradClass', 'major', 'phone', 'email', 'groups', 'password');
   profile.groups = profile.groups.split(',');
 
   Users.create(profile, function(err) {
