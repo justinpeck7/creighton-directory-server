@@ -144,6 +144,23 @@ app.get('/user/auth/findAll', function(req, res) {
   });
 });
 
+/*Find single user by netId*/
+app.get('/user/auth/findOne', function(req, res) {
+  var netId = req.query.netId;
+
+  Users.findOne({
+    'netId': {
+      '$regex': netId,
+      '$options': 'i'
+    }
+  }, function(err, user) {
+    var result = scrubUsers(user);
+    res.send({
+      user: result
+    });
+  });
+});
+
 /*Advanced search. Grabs all of the request parameters and passes them to the buildQuery function,
 then runs that query and returns the result*/
 app.get('/user/auth/findAllAdvanced', function(req, res) {
