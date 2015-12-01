@@ -52,6 +52,6 @@ app.delete('/announcements/auth/all', function(req, res) {
         res.send(err);
       }
       res.json(users);
-    })
+    });
   });
 });

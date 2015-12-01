@@ -90,7 +90,7 @@ app.post('/user/createSession', function(req, res) {
       return res.status(401).send("The netId or password don't match");
     }
 
-    if (!user.password === req.body.password) {
+    if (user.password !== req.body.password) {
       return res.status(401).send("The netId or password don't match");
     }
 
@@ -123,7 +123,7 @@ app.delete('/user/auth/test/allUsers', function(req, res) {
         res.send(err);
       }
       res.json(users);
-    })
+    });
   });
 });
 
