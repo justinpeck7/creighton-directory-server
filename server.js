@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 /*Load user-routes.js and announcement-routes.js and add them to the express url mapping*/
 app.use(require('./user-routes'));
 app.use(require('./announcement-routes'));
+app.use(require('./upload-routes'));
 /*Load socket-config.js which sets up Socket.io chat functionality*/
 require('./socket-config')(io);
 

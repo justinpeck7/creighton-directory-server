@@ -25,7 +25,16 @@ var userSchema = new Schema({
     }),
     Announcements = mongoose.model('Announcements', anncSchema);
 
+/*Schema for the 'Images' model in our mongoose database*/
+    var imgSchema = new Schema ({
+        netId: String,
+        image: String,
+        contentType: String
+    }),
+    Images = mongoose.model('Images', imgSchema);
+
 module.exports = {
     Users: Users,
-    Announcements: Announcements
+    Announcements: Announcements,
+    Images: Images
 };
