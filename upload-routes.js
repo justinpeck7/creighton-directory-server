@@ -13,6 +13,9 @@ var jwtCheck = ejwt({
   secret: config.secret
 });
 
+/*Make sure users who upload pictures are authenticated*/
+app.use('/upload', jwtCheck);
+
 /*Handles the actual saving of images to the /uploads/images folder*/
 var uploader = multer({
   dest: './uploads/images',
@@ -22,9 +25,9 @@ var uploader = multer({
   }
 });
 
-/*Receive post request with image attached. If the user already has a profile picture,
+/*Receive post request with image/profile data attached. If the user already has a profile picture,
 update their info and save the image. Otherwise create a new document in the database
-and save the image*/
+and save the image. Update Users document with any new info.*/
 app.post('/upload/auth/profile', uploader.single('picture'), function(req, res) {
   var file = req.file,
     userData = JSON.parse(req.body.userData);
@@ -72,6 +75,7 @@ app.post('/upload/auth/profile', uploader.single('picture'), function(req, res) 
 
 });
 
+/*Get the profile picture for a given netId. If no picture exists send the default image*/
 app.get('/profile/image', function(req, res) {
 
   var netId = req.query.netId;
@@ -87,17 +91,5 @@ app.get('/profile/image', function(req, res) {
       res.header('Content-Type', 'image/jpeg');
       res.sendFile(__dirname + '/uploads/images/default.jpg');
     }
-  });
-});
-
-app.get('/allimages', function(req, res) {
-  Images.find(function(err, images) {
-    res.send(images);
-  });
-});
-
-app.get('/deleteimages', function(req, res) {
-  Images.remove(function(err, images) {
-    res.send(images);
   });
 });
