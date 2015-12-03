@@ -53,6 +53,9 @@ app.post('/upload/auth/profile', uploader.single('picture'), function(req, res) 
   }
 
   if (userData) {
+    if (userData.groups) {
+      userData.groups = userData.groups.split(',');
+    }
     Users.findOne({
       netId: req.body.netId
     }, function(err, user) {
@@ -75,13 +78,12 @@ app.get('/profile/image', function(req, res) {
   Images.findOne({
     netId: netId
   }, function(err, image) {
-    if(image) {
+    if (image) {
       var contentType = image.contentType,
         imageName = image.image;
       res.header('Content-Type', contentType);
       res.sendFile(__dirname + '/uploads/images/' + imageName);
-    }
-    else {
+    } else {
       res.header('Content-Type', 'image/jpeg');
       res.sendFile(__dirname + '/uploads/images/default.jpg');
     }
