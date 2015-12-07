@@ -102,31 +102,6 @@ app.post('/user/createSession', function(req, res) {
 
 });
 
-/*will be removed*/
-app.get('/user/auth/test/allUsers', function(req, res) {
-  Users.find(function(err, users) {
-    if (err) {
-      res.send(err);
-    }
-    res.json(users);
-  });
-});
-
-/*will be removed*/
-app.delete('/user/auth/test/allUsers', function(req, res) {
-  Users.remove({}, function(err, users) {
-    if (err) {
-      res.send(err);
-    }
-    Users.find(function(err, users) {
-      if (err) {
-        res.send(err);
-      }
-      res.json(users);
-    });
-  });
-});
-
 /*Find all users by name*/
 app.get('/user/auth/findAll', function(req, res) {
   var name = req.query.name;

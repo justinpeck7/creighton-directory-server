@@ -40,18 +40,3 @@ app.post('/announcements/auth/new', function(req, res) {
   res.status(201).send('added');
 
 });
-
-/*will be removed*/
-app.delete('/announcements/auth/all', function(req, res) {
-  Users.remove({}, function(err, users) {
-    if (err) {
-      res.send(err);
-    }
-    Users.find(function(err, users) {
-      if (err) {
-        res.send(err);
-      }
-      res.json(users);
-    });
-  });
-});

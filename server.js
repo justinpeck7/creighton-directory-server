@@ -54,7 +54,7 @@ app.all('*', function(req, res, next) {
 
 app.use(express.static('static'));
 
-/*Tells the server to listen on port 3001, so all of the server routes are localhost:3001/yada/yada*/
+/*Tells the server to listen on port 3000, so all of the server routes are localhost:3000/yada/yada*/
 server.listen(3000);
 console.log('listening on port 3000');
 
