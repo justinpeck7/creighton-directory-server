@@ -4,3 +4,4 @@ node_modules
 uploads
 static
 mongoose-config.json
+.DS_Store
