@@ -11,7 +11,7 @@ var jwtCheck = ejwt({
   secret: config.secret
 });
 
-var whitelist = ['jmp51608'];
+var whitelist = config.admins;
 
 /*Every time a request is made to /announcements/auth/something make sure a valid token is attached*/
 app.use('/announcements/auth', jwtCheck);
