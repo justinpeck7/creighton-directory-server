@@ -62,8 +62,7 @@ app.post('/user/createUser', function(req, res) {
     return res.status(400).send("A user with that netId already exists");
   }
 
-  var profile = _.pick(req.body, 'name', 'dormName', 'dormRoom', 'netId', 'gradClass', 'major', 'phone', 'email', 'groups', 'password');
-  profile.groups = profile.groups.split(',');
+  var profile = _.pick(req.body, 'name', 'netId', 'password');
 
   Users.create(profile, function(err) {
     if (err) {

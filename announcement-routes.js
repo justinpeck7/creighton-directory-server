@@ -11,6 +11,8 @@ var jwtCheck = ejwt({
   secret: config.secret
 });
 
+var whitelist = ['jmp51608'];
+
 /*Every time a request is made to /announcements/auth/something make sure a valid token is attached*/
 app.use('/announcements/auth', jwtCheck);
 
@@ -22,6 +24,11 @@ app.get('/announcements/auth/all', function(req, res) {
     }
     res.json(results);
   });
+});
+
+//Can the user add announcements
+app.get('/announcements/auth/canAdd', function(req, res) {
+  res.send(whitelist.indexOf(req.user.netId) !== -1);
 });
 
 /*Endpoint to create a new announcement*/
