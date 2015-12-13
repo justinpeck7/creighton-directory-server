@@ -25,6 +25,51 @@ var uploader = multer({
   }
 });
 
+function updateProfilePicture(netId, file, callback) {
+  var imgData = {
+    netId: netId,
+    image: file.filename,
+    contentType: file.mimetype
+  };
+  Images.findOne({
+    netId: netId
+  }, function(err, image) {
+    if (image) {
+      image.image = file.filename;
+      image.contentType = file.mimetype;
+      image.save(function(err, image) {
+        callback();
+      });
+    } else {
+      Images.create(imgData, function(err) {
+        if (err) {
+          res.send(err);
+        }
+        callback();
+      });
+    }
+  });
+}
+
+function updateProfileData(netId, userData, callback) {
+  if (userData.groups) {
+    userData.groups = userData.groups.split(',');
+  }
+  Users.findOne({
+    netId: netId
+  }, function(err, user) {
+    if (err) {
+      res.send(err);
+    }
+    for (var prop in userData) {
+      user[prop] = userData[prop];
+    }
+    user.save(function(err, user) {
+      callback();
+    });
+  });
+}
+
 /*Receive post request with image/profile data attached. If the user already has a profile picture,
 update their info and save the image. Otherwise create a new document in the database
 and save the image. Update Users document with any new info.*/
@@ -32,47 +77,24 @@ app.post('/upload/auth/profile', uploader.single('picture'), function(req, res) 
   var file = req.file,
     userData = JSON.parse(req.body.userData);
 
-  if (file) {
-    var imgData = {
-      netId: req.body.netId,
-      image: file.filename,
-      contentType: file.mimetype
-    };
-    Images.findOne({
-      netId: req.body.netId
-    }, function(err, image) {
-      if (image) {
-        image.image = file.filename;
-        image.contentType = file.mimetype;
-        image.save();
-      } else {
-        Images.create(imgData, function(err) {
-          if (err) {
-            res.send(err);
-          }
-        });
-      }
+  if (file && userData) {
+    updateProfilePicture(req.body.netId, file, function() {
+      updateProfileData(req.body.netId, userData, function() {
+        res.status(201).send('Updated!');
+      });
+    });
+  } else if (file && !userData) {
+    updateProfilePicture(req.body.netId, file, function() {
+      res.status(201).send('Updated!');
+    });
+  } else if (!file && userData) {
+    updateProfileData(req.body.netId, userData, function() {
+      res.status(201).send('Updated!');
     });
   }
-
-  if (userData) {
-    if (userData.groups) {
-      userData.groups = userData.groups.split(',');
-    }
-    Users.findOne({
-      netId: req.body.netId
-    }, function(err, user) {
-      if (err) {
-        res.send(err);
-      }
-      for (var prop in userData) {
-        user[prop] = userData[prop];
-      }
-      user.save();
-    });
+  else {
+    res.status(201).send('Nothing to update');
   }
-  res.status(201).send('Updated!');
-
 });
 
 /*Get the profile picture for a given netId. If no picture exists send the default image*/
